@@ -6,14 +6,12 @@ def find_files(folder: str, pattern: str = "*") -> list[Path]:
 
     path = Path(folder)
 
-    if not path.exists():
-        err = f"Folder '{folder}' does not exist."
-        return err
-    else:
-        files_list = []
-        for file in path.rglob(pattern):
-            if file.is_file():
-                files_list.append(file)
+    
+    files_list = []
+
+    for file in path.rglob(pattern):
+        if file.is_file():
+            files_list.append(file)
 
     return files_list
 
