@@ -15,8 +15,3 @@ def find_files(folder: str, pattern: str = "*") -> list[Path]:
 
     return files_list
 
-# for test purpose only 
-test_path = Path(".")
-for files in find_files(test_path, "*.py"):
-    print(files)
-    

@@ -20,7 +20,7 @@ def validate_rename_plan(plan: list[tuple[Path, Path]]) -> list[str]:
 
 
         destination_path = destination.resolve()
-        if (destination_path.exists() and destination_path not in source_paths):
+        if (destination_path.exists() and destination_path in source_paths):
             errors.append(f"Destination path {destination} already existed.")
 
     return errors
