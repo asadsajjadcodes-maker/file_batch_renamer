@@ -1,31 +1,29 @@
 # File Batch Renamer
 
-A Python-based CLI tool designed to recursively scan directories and safely sanitize file names by removing special characters, normalizing spacing, and converting text to lowercase while preserving file extensions.
+A lightweight desktop application built with Python and PySide6 designed to scan, preview, validate, and execute batch file renaming operations safely across directories.
 
----
+## Features
 
-## 🛠️ Features & Progress
+- **Directory Scanning**: Recursively scans target folders for files using pattern matching.
+- **Custom Prefixing & Numbering**: Generates structured 3-digit zero-padded index numbers (`001`, `002`, etc.) with user-defined prefixes.
+- **Filename Sanitization**: Strip unwanted special characters and replace spaces with underscores while preserving file extensions.
+- **Safety Validation**: Validates paths prior to execution to prevent accidental overwrites or missing file errors.
+- **Dry-Run Preview**: Inspect planned file structure changes in the console before applying changes to disk.
+- **Graphical Interface**: Clean GUI powered by PySide6.
 
-* **Day 1–2: String Sanitization (`cleaner.py`)**
-  * Strips leading and trailing whitespace[cite: 1].
-  * Replaces special characters, symbols, and spaces with single underscores (`_`)[cite: 1].
-  * Normalizes file stems to lowercase while retaining original file extensions[cite: 1].
-
-* **Day 3: Recursive Directory Scanner (`scanner.py`)**
-  * Uses `pathlib.Path` to scan directories recursively via `rglob`[cite: 2].
-  * Accepts custom wildcard pattern matching (e.g., `*.py`, `*.jpg`)[cite: 2].
-  * Validates path existence and safely returns lists of target files[cite: 2].
-
----
-
-## 📂 Project Structure
+## Project Structure
 
 ```text
 file_batch_renamer/
-│
 ├── app/
-│   ├── __init__.py    # Package initialization module
-│   ├── cleaner.py     # Core logic for string and filename sanitization
-│   └── scanner.py     # Directory scanning and file discovery module
-│
-└── README.md          # Project documentation
+│   ├── __init__.py
+│   ├── cleaner.py      # Filename sanitization logic
+│   ├── executor.py     # System file operation execution
+│   ├── gui.py          # PySide6 desktop user interface
+│   ├── preview.py      # Preview formatting logic
+│   ├── renamer.py      # Rename plan generation
+│   ├── scanner.py      # File system search utility
+│   └── validator.py    # Pre-execution validation checks
+├── Images/
+├── .gitignore
+└── Readme.md

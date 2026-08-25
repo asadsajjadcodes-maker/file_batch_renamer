@@ -11,7 +11,7 @@ from pathlib import Path
 from scanner import find_files
 from renamer import create_rename_plan
 from validator import validate_rename_plan
-
+from executor import execute_rename_plan
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -54,6 +54,9 @@ class MainWindow(QWidget):
         # connect preview button
         self.preview_button.clicked.connect(self.preview)
 
+        # connect rename button.
+        self.rename_button.clicked.connect(self.rename)
+
 
 
 
@@ -95,8 +98,27 @@ class MainWindow(QWidget):
             print(f"{source.name} ->  {destination.name}")
 
 
+    def rename(self):
+        folder = self.folder_input.text()
+        prefix = self.prefix_input.text()
 
-        
+        files = find_files(folder)
+        files = sorted(files, key=lambda file: file.name.lower())
+        plan = create_rename_plan(files,prefix)
+
+        errors = validate_rename_plan(plan)
+        if errors:
+            for error in errors:
+                print(f"Error: {error}")
+            return
+        else:
+            execute_rename_plan(plan)
+            for source, destination in plan:
+                print(f"Renamed : {source.name} -> {destination.name}")
+
+
+        print("Task completed successfully")
+                    
 
 
 
