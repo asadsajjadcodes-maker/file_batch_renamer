@@ -1,17 +1,22 @@
 from PySide6.QtWidgets import (
     QApplication,
+    QMainWindow, 
+    QWidget, 
     QVBoxLayout,
-    QWidget,
-    QPushButton,
-    QLabel,
-    QLineEdit,
-    QCheckBox
+    QHBoxLayout, 
+    QLabel, 
+    QPushButton, 
+    QLineEdit, 
+    QTextEdit, 
+    QFileDialog,
+    QProgressBar
 )
 from pathlib import Path
 from scanner import find_files
 from renamer import create_rename_plan
 from validator import validate_rename_plan
 from executor import execute_rename_plan
+from logger import log_info, log_warning, log_error, gui_handler
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -40,10 +45,7 @@ class MainWindow(QWidget):
         self.prefix_input = QLineEdit()
         self.prefix_input.setPlaceholderText("Prefix")
 
-        # checkbox for file name cleaning 
-        self.clean_checkbox = QCheckBox(
-            "Clean Filename"
-        )
+       
 
         # preview button 
         self.preview_button = QPushButton("Preview")
@@ -70,17 +72,33 @@ class MainWindow(QWidget):
         layout.addWidget(title)
         layout.addWidget(self.folder_input)
         layout.addWidget(self.prefix_input)
-        layout.addWidget(self.clean_checkbox)
+        
         layout.addWidget(self.preview_button)
         layout.addWidget(self.rename_button)
 
         # apply the layout configuration to the main window.
         self.setLayout(layout)  # set the layout to the main window
 
+        # Log Text Area
+        self.display_screen = QTextEdit()
+        self.display_screen.setReadOnly(True)
+        layout.addWidget(self.display_screen)
+
+        # Connect shared GUI handler signal to display_screen writer method
+        gui_handler.log_message.connect(self.show_message)
+        log_info("GUI triple-logging system initialized successfully.")
+
+    def show_message(self, message: str) -> None:
+        """Appends formatted messages directly to the UI screen."""
+        self.display_screen.append(message)
+
     # preview function 
     def preview(self):
         folder = self.folder_input.text() # collects data from folder input box.
         prefix = self.prefix_input.text() # collects data from prefix input box.
+        if not folder or not prefix:
+            log_error("Error : Folder path and prefix can not be empty!")
+            return
 
         files = find_files(folder)
         files = sorted(files, key=lambda file: file.name.lower()) # sort the file list using lowercase file names 
@@ -91,16 +109,20 @@ class MainWindow(QWidget):
 
         if errors:
             for error in errors:
-                print(f"Error: {error}")
+                log_info(f"Error: {error}")
             return
 
         for source, destination in plan:
-            print(f"{source.name} ->  {destination.name}")
+            log_info(f"{source.name} ->  {destination.name}")
 
 
     def rename(self):
         folder = self.folder_input.text()
         prefix = self.prefix_input.text()
+
+        if not folder or not prefix:
+            log_error("Error : Folder path and prefix can not be empty!")
+            return
 
         files = find_files(folder)
         files = sorted(files, key=lambda file: file.name.lower())
@@ -109,15 +131,15 @@ class MainWindow(QWidget):
         errors = validate_rename_plan(plan)
         if errors:
             for error in errors:
-                print(f"Error: {error}")
+                log_info(f"Error: {error}")
             return
         else:
             execute_rename_plan(plan)
             for source, destination in plan:
-                print(f"Renamed : {source.name} -> {destination.name}")
+                log_info(f"Renamed : {source.name} -> {destination.name}")
 
 
-        print("Task completed successfully")
+        log_info("Task completed successfully")
                     
 
 
