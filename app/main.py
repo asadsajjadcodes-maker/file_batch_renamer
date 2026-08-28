@@ -39,13 +39,16 @@ class MainWindow(QWidget):
 
         # Text input box for the target directory 
         self.folder_input = QLineEdit()
-        self.folder_input.setPlaceholderText("Enter folder path")
+        self.folder_input.setPlaceholderText("Enter folder path or clisk 'Browse' to select a folder.")
 
         # text input box for an optional prefix for renamed files.
         self.prefix_input = QLineEdit()
         self.prefix_input.setPlaceholderText("Prefix")
 
+
        
+        # browse button 
+        self.browse_button = QPushButton("Browse")
 
         # preview button 
         self.preview_button = QPushButton("Preview")
@@ -59,7 +62,8 @@ class MainWindow(QWidget):
         # connect rename button.
         self.rename_button.clicked.connect(self.rename)
 
-
+        # connect browse button 
+        self.browse_button.clicked.connect(self.browse_folder)
 
 
 
@@ -72,7 +76,7 @@ class MainWindow(QWidget):
         layout.addWidget(title)
         layout.addWidget(self.folder_input)
         layout.addWidget(self.prefix_input)
-        
+        layout.addWidget(self.browse_button)
         layout.addWidget(self.preview_button)
         layout.addWidget(self.rename_button)
 
@@ -87,6 +91,27 @@ class MainWindow(QWidget):
         # Connect shared GUI handler signal to display_screen writer method
         gui_handler.log_message.connect(self.show_message)
         log_info("GUI triple-logging system initialized successfully.")
+
+
+    def browse_folder(self):
+        # open folder picker dialog and set selected directory Path.
+
+        selected_folder = QFileDialog.getExistingDirectory(self, "Select Asset Directory", "")
+
+        if selected_folder:
+            self.folder_input.setText(selected_folder)
+            log_info(f"Folder selected : '{selected_folder}'")
+
+
+
+
+
+
+
+
+
+
+
 
     def show_message(self, message: str) -> None:
         """Appends formatted messages directly to the UI screen."""
